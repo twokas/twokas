@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfólio — Twokas Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --amarelo: #FFD600; --laranja: #FF6B1A; --preto: #111111;
+  --preto2: #1C1C1C; --creme: #FFF8E7; --cinza: #888;
+  --font-titulo: 'Bebas Neue', sans-serif;
+  --font-corpo: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --max: 1600px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-corpo); background: var(--preto); color: var(--creme); overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--preto); border-bottom: 1px solid rgba(255,214,0,.15);
+  display: flex; align-items: center; justify-content: center;
+  height: 64px;
+}
+.nav-inner { max-width: var(--max); width: 100%; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: var(--font-titulo); font-size: 28px; letter-spacing: 2px; color: var(--amarelo); }
+.nav-logo span { color: var(--laranja); }
+.nav-back {
+  font-family: var(--font-mono); font-size: 12px; color: var(--cinza);
+  border: 1px solid rgba(255,255,255,.12); padding: 7px 16px; border-radius: 99px; transition: all .2s;
+}
+.nav-back:hover { border-color: var(--amarelo); color: var(--amarelo); }
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a { font-size: 13px; font-family: var(--font-mono); color: var(--cinza); letter-spacing: .5px; transition: color .2s; }
+.nav-links a:hover, .nav-links a.nav-ativo { color: var(--amarelo); }
+.nav-cta {
+  padding: 8px 20px; border-radius: 99px;
+  background: var(--laranja) !important; color: #fff !important;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .5px; transition: opacity .2s;
+}
+.nav-cta:hover { opacity: .85; }
+.filtro-nsfw { border-color: rgba(255,107,26,.4) !important; color: var(--laranja) !important; }
+.filtro-nsfw.ativo { background: var(--laranja) !important; color: #fff !important; border-color: var(--laranja) !important; }
+
+.page-header { padding: 60px 80px 40px; max-width: 1600px; margin: 0 auto; box-sizing: border-box; width: 100%; }
+.page-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--laranja); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+.page-titulo { font-family: var(--font-titulo); font-size: clamp(56px, 8vw, 96px); line-height: 1; }
+.page-titulo span { color: var(--laranja); }
+
+.filtros-bar {
+  max-width: 1600px; margin: 0 auto; width: 100%;
+  padding: 0 80px 32px; box-sizing: border-box;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.filtro-btn {
+  padding: 8px 18px; border-radius: 99px; font-family: var(--font-mono); font-size: 12px;
+  border: 1px solid rgba(255,255,255,.15); color: var(--cinza); cursor: pointer;
+  background: none; transition: all .2s;
+}
+.filtro-btn.ativo, .filtro-btn:hover { border-color: var(--amarelo); color: var(--amarelo); }
+.filtros-count { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--cinza); }
+
+.galeria { padding: 40px 80px 80px; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.galeria-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+}
+.galeria-item {
+  aspect-ratio: 3/4; border-radius: 12px; overflow: hidden;
+  background: var(--preto2); cursor: pointer; position: relative;
+}
+.galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.galeria-item:hover img { transform: scale(1.05); }
+.galeria-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.85) 0%, transparent 50%);
+  opacity: 0; transition: opacity .3s;
+  display: flex; align-items: flex-end; padding: 20px; flex-direction: column; justify-content: flex-end;
+}
+.galeria-item:hover .galeria-overlay { opacity: 1; }
+.galeria-overlay-titulo { font-family: var(--font-titulo); font-size: 20px; color: #fff; }
+.galeria-overlay-cat {
+  font-family: var(--font-mono); font-size: 10px; color: var(--amarelo);
+  border: 1px solid var(--amarelo); padding: 2px 8px; border-radius: 99px; margin-top: 6px;
+  width: fit-content;
+}
+.galeria-vazio { grid-column: 1/-1; text-align: center; padding: 80px; font-family: var(--font-mono); font-size: 13px; color: var(--cinza); }
+
+/* ===== CTA FINAL PADRÃO ===== */
+.cta-final-section { background: var(--amarelo); padding: 80px 48px; text-align: center; }
+.cta-final-inner { max-width: 640px; margin: 0 auto; }
+.cta-final-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--laranja); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+.cta-final-titulo { font-family: var(--font-titulo); font-size: clamp(48px,6vw,80px); color: var(--preto); line-height: 1; margin-bottom: 16px; }
+.cta-final-titulo span { color: var(--laranja); }
+.cta-final-desc { font-size: 15px; color: #444; line-height: 1.7; margin-bottom: 32px; }
+.cta-final-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-cta-dark { padding: 14px 32px; border-radius: 8px; background: var(--preto); color: var(--amarelo); font-family: var(--font-titulo); font-size: 22px; letter-spacing: 1px; transition: opacity .2s; }
+.btn-cta-dark:hover { opacity: .85; color: var(--amarelo); }
+.btn-cta-outline { padding: 14px 32px; border-radius: 8px; border: 2px solid var(--preto); color: var(--preto); font-family: var(--font-titulo); font-size: 22px; letter-spacing: 1px; transition: all .2s; }
+.btn-cta-outline:hover { background: var(--preto); color: var(--amarelo); }
+
+#modal-img {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,.94); align-items: center; justify-content: center;
+}
+#modal-img.aberto { display: flex; }
+#modal-img img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+/* Botão X amarelo */
+#modal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--amarelo); color: var(--preto);
+  font-size: 22px; font-weight: bold; line-height: 1;
+  cursor: pointer; border: none; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .15s;
+}
+#modal-close:hover { transform: scale(1.1); }
+/* Setas amarelas de navegação */
+.modal-seta {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--amarelo);
+  font-size: 72px; line-height: 1; cursor: pointer;
+  padding: 24px 16px; z-index: 3; font-family: var(--font-titulo);
+  transition: transform .15s, opacity .15s; opacity: .85;
+}
+.modal-seta:hover { opacity: 1; transform: translateY(-50%) scale(1.15); }
+#modal-seta-prev { left: 12px; }
+#modal-seta-next { right: 12px; }
+
+/* Proteção leve das imagens */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Hamburger — só aparece no mobile */
+.nav-burger {
+  display: none;
+  background: none; border: none; color: var(--amarelo);
+  font-size: 28px; cursor: pointer; padding: 4px 8px;
+}
+
+@media (max-width: 900px) {
+  .nav-inner { padding: 0 20px; }
+  .nav-burger { display: block; }
+  nav { position: relative; }
+  .nav-links {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0;
+    background: var(--preto);
+    border-bottom: 2px solid var(--amarelo);
+    padding: 8px 0; z-index: 300;
+  }
+  .nav-links.aberto { display: flex; }
+  .nav-links a { padding: 14px 24px; font-size: 15px; text-align: left; width: 100%; }
+  .nav-links .nav-cta { margin: 8px 24px; width: auto; text-align: center; }
+  .modal-seta { font-size: 48px; padding: 16px 8px; }
+  #modal-close { width: 40px; height: 40px; font-size: 18px; }
+  .page-header { padding: 40px 20px 24px; }
+  .filtros-bar { padding: 0 20px 24px; }
+  .galeria { padding: 24px 20px 60px; }
+  .cta-final-section { padding: 60px 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+  <a href="index.html" class="nav-logo">TWOKAS <span>ART</span></a>
+  <button class="nav-burger" onclick="toggleMenuMobile()" aria-label="Menu">☰</button>
+  <div class="nav-links" id="nav-links">
+    <a href="portfolio.html" class="nav-ativo">Portfólio</a>
+    <a href="index.html#packs">Packs</a>
+    <a href="cmyk.html">CMYK</a>
+    <a href="index.html#sobre">Sobre</a>
+    <a href="comissoes.html" class="nav-cta">Solicitar comissão</a>
+  </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow">Trabalhos</div>
+  <h1 class="page-titulo">Port<span>fólio</span></h1>
+</div>
+
+<div class="filtros-bar">
+  <button class="filtro-btn ativo" onclick="filtrar('todos', this)">Todos</button>
+  <button class="filtro-btn" onclick="filtrar('original', this)">Originais</button>
+  <button class="filtro-btn" onclick="filtrar('comissao', this)">Comissões</button>
+  <button class="filtro-btn" onclick="filtrar('fanart', this)">Fanart</button>
+  <button class="filtro-btn filtro-nsfw" onclick="filtrarNSFW(this)">+18 / NSFW</button>
+  <span class="filtros-count" id="count">0 obras</span>
+</div>
+
+<!-- Modal confirmação NSFW -->
+<div id="modal-nsfw" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.92);align-items:center;justify-content:center;">
+  <div style="background:#1C1C1C;border:1px solid rgba(255,107,26,.3);border-radius:16px;padding:40px 48px;max-width:440px;width:90%;text-align:center;">
+    <div style="font-family:var(--font-titulo);font-size:48px;color:var(--laranja);margin-bottom:8px;">+18</div>
+    <div style="font-family:var(--font-titulo);font-size:28px;color:var(--creme);margin-bottom:16px;">Conteúdo adulto</div>
+    <p style="font-size:14px;color:rgba(255,248,231,.6);line-height:1.7;margin-bottom:28px;">Esta categoria contém ilustrações explícitas (NSFW). Ao continuar, você confirma que tem 18 anos ou mais.</p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button onclick="confirmarNSFW()" style="padding:12px 28px;border-radius:8px;background:var(--laranja);border:none;color:#fff;font-family:var(--font-titulo);font-size:20px;cursor:pointer;letter-spacing:1px;">Confirmo, tenho 18+</button>
+      <button onclick="fecharNSFW()" style="padding:12px 28px;border-radius:8px;background:none;border:2px solid rgba(255,255,255,.2);color:rgba(255,248,231,.5);font-family:var(--font-titulo);font-size:20px;cursor:pointer;letter-spacing:1px;">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<div class="galeria">
+  <div class="galeria-grid" id="galeria-grid">
+    <div class="galeria-vazio">Carregando portfólio...</div>
+  </div>
+</div>
+
+<section class="cta-final-section">
+  <div class="cta-final-inner">
+    <div class="cta-final-eyebrow">Trabalho personalizado</div>
+    <h2 class="cta-final-titulo">Quer algo <span>exclusivo?</span></h2>
+    <p class="cta-final-desc">Comissões abertas — ilustrações personalizadas com o seu personagem.</p>
+    <div class="cta-final-btns">
+      <a href="comissoes.html" class="btn-cta-dark">Solicitar Comissão</a>
+      <a href="packs.html" class="btn-cta-outline">Ver Packs</a>
+    </div>
+  </div>
+</section>
+
+<div id="modal-img">
+  <button id="modal-close" onclick="fecharModal()" aria-label="Fechar">✕</button>
+  <button class="modal-seta" id="modal-seta-prev" onclick="navegarModal(-1)" aria-label="Anterior">‹</button>
+  <img id="modal-src" src="" alt="">
+  <button class="modal-seta" id="modal-seta-next" onclick="navegarModal(1)" aria-label="Próxima">›</button>
+</div>
+
+<script>
+const NOME_ARQUIVO_PT = 'twokas_dados_pt.json';
+const NOME_ARQUIVO_EN = 'twokas_dados_en.json';
+/* Leitura pública dos dados — mesmos valores do index.html */
+const API_KEY = 'AIzaSyDDEQwDd1RHYidQASgCbdNeI87GGnRqLg8';
+const ARQUIVO_PUBLICO_ID_PT = '1L-GgazdP9Axl4OsVBbied0oo35lLzqtM';
+const ARQUIVO_PUBLICO_ID_EN = '1NbgOqAXS48SaLVdyytyW4C6rYweii5EW';
+const idioma = sessionStorage.getItem('tw_lang') || 'pt';
+let portfolio = [];
+let catAtual = 'todos';
+let modalLista = [];
+let modalIdx = 0;
+
+function driveUrlParaImagem(url, tamanho) {
+  const m1 = url.match(/\/file\/d\/([^/]+)/);
+  const m2 = url.match(/[?&]id=([^&]+)/);
+  const id = m1 ? m1[1] : m2 ? m2[1] : null;
+  if (id) {
+    if (tamanho === 'full') return `https://drive.google.com/uc?export=view&id=${id}`;
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+  }
+  return url;
+}
+
+function carregarDados() {
+  // 1. Mostra rápido o que tiver no navegador (cache local)
+  try {
+    const raw = localStorage.getItem('tw_dados_' + idioma);
+    if (raw) {
+      const dados = JSON.parse(raw);
+      portfolio = dados.portfolio || [];
+    }
+  } catch(e) {}
+  renderGaleria(portfolio.filter(i => i.categoria !== 'nsfw'));
+  // 2. Busca a versão mais recente do Drive (funciona para qualquer visitante)
+  carregarPublico();
+}
+
+async function carregarPublico() {
+  const fileId = idioma === 'pt' ? ARQUIVO_PUBLICO_ID_PT : ARQUIVO_PUBLICO_ID_EN;
+  if (!API_KEY || !fileId) return;
+  try {
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`);
+    if (!r.ok) return;
+    const dados = await r.json();
+    portfolio = dados.portfolio || [];
+    localStorage.setItem('tw_dados_' + idioma, JSON.stringify(dados));
+    // Re-renderiza respeitando o filtro atual
+    if (catAtual === 'nsfw') {
+      renderGaleria(portfolio.filter(i => i.categoria === 'nsfw'));
+    } else if (catAtual === 'todos') {
+      renderGaleria(portfolio.filter(i => i.categoria !== 'nsfw'));
+    } else {
+      renderGaleria(portfolio.filter(i => i.categoria !== 'nsfw' && i.categoria === catAtual));
+    }
+    console.log('Dados públicos carregados do Drive ✓');
+  } catch(e) { console.warn('Leitura pública erro:', e); }
+}
+
+function renderGaleria(items) {
+  const grid = document.getElementById('galeria-grid');
+  const count = document.getElementById('count');
+  if (!items || items.length === 0) {
+    grid.innerHTML = '<div class="galeria-vazio">Nenhuma obra encontrada.</div>';
+    count.textContent = '0 obras';
+    return;
+  }
+  count.textContent = items.length + ' obra' + (items.length !== 1 ? 's' : '');
+  modalLista = items.map(i => ({ url: driveUrlParaImagem(i.url, 'full') }));
+  grid.innerHTML = items.map((img, idx) => `
+    <div class="galeria-item" onclick="abrirModalIdx(${idx})">
+      <img src="${driveUrlParaImagem(img.url)}" alt="${img.titulo}" loading="lazy">
+      <div class="galeria-overlay">
+        <div class="galeria-overlay-titulo">${img.titulo}</div>
+        <div class="galeria-overlay-cat">${img.categoria}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrar(cat, btn) {
+  catAtual = cat;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  // Nunca mostra NSFW ao filtrar categorias normais
+  const sem_nsfw = portfolio.filter(i => i.categoria !== 'nsfw');
+  const items = cat === 'todos' ? sem_nsfw : sem_nsfw.filter(i => i.categoria === cat);
+  renderGaleria(items);
+}
+
+function filtrarNSFW(btn) {
+  // Mostra modal de confirmação
+  const modal = document.getElementById('modal-nsfw');
+  modal.style.display = 'flex';
+  modal._btn = btn;
+}
+
+function confirmarNSFW() {
+  const modal = document.getElementById('modal-nsfw');
+  modal.style.display = 'none';
+  const btn = modal._btn;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  catAtual = 'nsfw';
+  const items = portfolio.filter(i => i.categoria === 'nsfw');
+  renderGaleria(items);
+}
+
+function fecharNSFW() {
+  document.getElementById('modal-nsfw').style.display = 'none';
+}
+
+function abrirModalIdx(i) {
+  modalIdx = i;
+  mostrarModalAtual();
+  document.getElementById('modal-img').classList.add('aberto');
+}
+function mostrarModalAtual() {
+  const item = modalLista[modalIdx];
+  if (item) document.getElementById('modal-src').src = item.url;
+  const mostrar = modalLista.length > 1 ? 'block' : 'none';
+  document.getElementById('modal-seta-prev').style.display = mostrar;
+  document.getElementById('modal-seta-next').style.display = mostrar;
+}
+function navegarModal(dir) {
+  if (modalLista.length < 2) return;
+  modalIdx = (modalIdx + dir + modalLista.length) % modalLista.length;
+  mostrarModalAtual();
+}
+function fecharModal() {
+  document.getElementById('modal-img').classList.remove('aberto');
+  document.getElementById('modal-src').src = '';
+}
+
+function toggleMenuMobile() {
+  document.getElementById('nav-links').classList.toggle('aberto');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { fecharModal(); fecharNSFW(); }
+  if (e.key === 'ArrowLeft') navegarModal(-1);
+  if (e.key === 'ArrowRight') navegarModal(1);
+});
+
+// Bloqueia "Salvar imagem como..." e arrastar
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+
+carregarDados();
+</script>
+</body>
+</html>
